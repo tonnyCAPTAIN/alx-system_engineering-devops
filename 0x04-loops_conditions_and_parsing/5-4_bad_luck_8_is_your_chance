@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Display bad lack on 4 and good lack on 8 the rest Best School
+i=1
+while ((i<=10))
+do
+	if ((i == 4 ))
+	then
+		echo 'bad lack'
+	elif ((i == 8))
+	then
+		echo 'good lack'
+	else
+		echo 'Best School'
+	fi
+	((i++))
+done
