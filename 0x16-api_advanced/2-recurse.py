@@ -1,37 +1,33 @@
 #!/usr/bin/python3
-"""
-Function that queries the Reddit API and prints
-the top ten hot posts of a subreddit
-"""
+""" module for function to return top 10 hot posts of a given subreddit """
 import requests
 import sys
+after = None
 
 
-def add_title(hot_list, hot_posts):
-    """ Adds item into a list """
-    if len(hot_posts) == 0:
-        return
-    hot_list.append(hot_posts[0]['data']['title'])
-    hot_posts.pop(0)
-    add_title(hot_list, hot_posts)
-
-
-def recurse(subreddit, hot_list=[], after=None):
-    """ Queries to Reddit API """
-    u_agent = 'Mozilla/5.0'
-    headers = {
-        'User-Agent': u_agent
-    }
-
-    params = {
-        'after': after
-    }
-
+def recurse(subreddit, hot_list=[]):
+    """     Args:
+        subreddit: subreddit name
+        hot_list: list of hot titles in subreddit
+        after: last hot_item appended to hot_list
+    Returns:
+        a list containing the titles of all hot articles for the subreddit
+        or None if queried subreddit is invalid """
+    global after
+    headers = {'User-Agent': 'xica369'}
     url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    res = requests.get(url,
-                       headers=headers,
-                       params=params,
-                       allow_redirects=False)
+    parameters = {'after': after}
+    response = requests.get(url, headers=headers, allow_redirects=False,
+                            params=parameters)
 
-    if res.status_code != 200:
-        return None
+    if response.status_code == 200:
+        next_ = response.json().get('data').get('after')
+        if next_ is not None:
+            after = next_
+            recurse(subreddit, hot_list)
+        list_titles = response.json().get('data').get('children')
+        for title_ in list_titles:
+            hot_list.append(title_.get('data').get('title'))
+        return hot_list
+    else:
+        return (None)
