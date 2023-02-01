@@ -1,6 +1,6 @@
-tack debugging by fixing a line in configuration file
-exec {'config file':
-path     => ['/usr/bin', '/bin'],
-command  => "sudo sed -i 's/class-wp-locale.phpp/class-wp-locale.php/g' /var/www/html/wp-settings.php",
-provider => 'shell',
+# Fixing the 500 error when a GET HTTP method is requested to Apache web server
+
+exec {'replace':
+	provider => shell,
+	command  => 'sed -i "s/phpp/php/g" /var/www/html/wp-settings.php'
 }
